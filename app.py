@@ -7,11 +7,13 @@ from flask_pymongo import PyMongo
 import os
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = "mongodb://localhost:27017/homework2"
+app.config["MONGO_URI"] = "mongodb://localhost:27017/homework3"
 mongo = PyMongo(app)
 
-@app.route('/')
+@app.route('/', methods=["GET", "POST"])
 def index():
+    postsFromDB = list(mongo.db.posts.find())
+
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
@@ -20,11 +22,22 @@ def index():
             "username" : username
         })
         if password == (user['password']):
-            return render_template("profile.html")
+            return render_template("story.html", posts = postsFromDB, username = user['username'])
         else:
             return 'Access denied'
 
     else:
         return render_template("index.html")
+
+@app.route('/story', methods=["GET", "POST"])
+def story():
+    postsFromDB = list(mongo.db.posts.find())
+    if request.method == "POST":
+        article = {
+            "title": request.form.get("title"),
+            "text": request.form.get("text")
+        }
+        mongo.db.posts.insert_one(article)
+    return render_template("story.html", posts = postsFromDB)
 
 app.run(host="localhost", port=5000, debug=True)

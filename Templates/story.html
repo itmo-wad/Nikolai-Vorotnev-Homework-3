@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Story page</title>
+    </head>
+    <body>
+        <h1>All posts</h1>
+        <p>Hi, {{username}}</p>
+        {% if not username == '' %}
+        <form method="POST" action="/story">
+            <input type="text" value="Title">
+            <input type="text" value="Text">
+            <input type="submit" value="Add a post">
+        </form>
+        {% endif %}
+        {% for post in posts %}
+        <div>
+            <h2>{{ post['header'] }}</h2>
+            <p>{{ post['text'] }}</p>
+        </div>
+        {% endfor %}
+        
+    </body>
+
+</html>
